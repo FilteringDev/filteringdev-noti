@@ -9,10 +9,10 @@ The Service processes the following categories of information to provide release
 
 - **Platform and destination information:** Discord or Telegram platform type; channel, chat, or user identifier; Telegram forum topic identifier where applicable; Discord server identifier; and the identifier of the user or administrator associated with a destination.
 - **Subscription and preference information:** subscribed repository, language preference, prerelease-notification preference, direct-message setting, and record-creation timestamp.
-- **GitHub release-event information:** GitHub delivery identifier; repository owner and name; release name, tag, body, author, URL, prerelease status, target commit, and publication action.
-- **Delivery information:** destination identifier, GitHub delivery identifier, delivery status, error message, and timestamp of each delivery attempt.
-- **Webhook deduplication information:** GitHub delivery identifier, repository, and receipt timestamp, used to prevent duplicate processing.
-- **Operational logs:** service configuration, database and platform-notifier startup, release processing, selected destination counts, and delivery failures. Delivery failures may include a destination identifier, platform, and error message.
+- **GitHub repository and release information:** GitHub App installation and repository information; repository owner and name; release ID, publication timestamp, name, tag, body, author, URL, prerelease status, and target commit. Draft releases are ignored.
+- **Delivery information:** destination identifier, release key, delivery status, error message, and timestamp of each delivery attempt. A release key combines a repository and release ID.
+- **Release deduplication and polling information:** repository, release ID, receipt timestamp, last processed release publication timestamp, HTTP ETag, and watermark update timestamp. This information prevents duplicate notifications and supports efficient polling.
+- **Operational logs:** service configuration, database and platform-notifier startup, GitHub App installation refreshes, release polling and processing, selected destination counts, and delivery failures. Delivery failures may include a destination identifier, platform, release key, and error message.
 
 The Service does not need your Discord or Telegram password. Authentication tokens and other service secrets are managed separately from the above user records.
 
@@ -22,13 +22,13 @@ The Service uses information to:
 
 - store and manage subscriptions and notification preferences;
 - identify an authorized Discord or Telegram destination and send release notifications;
-- process, verify, retry, and prevent duplicate GitHub webhook deliveries;
+- retrieve releases from repositories where the GitHub App is installed, and process, retry, and prevent duplicate release notifications;
 - record delivery results, diagnose failures, protect the Service, and maintain its operation; and
 - respond to deletion requests made with the `/forget` command.
 
 ## 3. Storage and security
 
-Service records are stored in a SQLite database. The underlying implementation exports database changes atomically and configures the database file with owner-only read/write permissions. The Service validates GitHub webhook signatures using HMAC-SHA256 and limits incoming webhook payloads to 1 MiB.
+Service records are stored in a SQLite database. The underlying implementation exports database changes atomically and configures the database file with owner-only read/write permissions. The Service authenticates GitHub API access through a GitHub App and polls installed repositories for releases, using HTTP ETags where available to avoid retrieving unchanged release lists.
 
 No method of storage or transmission is completely secure. The operator cannot guarantee absolute security.
 
@@ -38,15 +38,15 @@ To provide the Service, information is exchanged with the relevant third-party p
 
 - Discord receives the notification content and destination information needed to deliver messages to Discord.
 - Telegram receives the notification content and destination information needed to deliver messages to Telegram.
-- GitHub provides release webhook information used to process notifications.
+- GitHub provides GitHub App installation, repository, and release information used to process notifications.
 
 Discord, Telegram, and GitHub process information under their own terms and privacy policies. The Service does not sell personal information.
 
 ## 5. Retention and deletion
 
-The Service does not promise an automatic time-based deletion schedule. Subscription records, preference records, delivery-attempt records, operational logs, and webhook-receipt records may be retained until deleted or otherwise removed by the operator.
+The Service does not promise an automatic time-based deletion schedule. Subscription records, preference records, delivery-attempt records, operational logs, release-receipt records, and release-watermark records may be retained until deleted or otherwise removed by the operator.
 
-You may use `/forget` in Discord or Telegram to request deletion. For a server or group, this removes subscriptions and delivery history associated with that server or chat. For a direct message, it removes subscriptions, delivery history, and the applicable language setting. Webhook-receipt records used for deduplication are not linked to a user or destination and are not removed by `/forget`.
+You may use `/forget` in Discord or Telegram to request deletion. For a server or group, this removes subscriptions and delivery history associated with that server or chat. For a direct message, it removes subscriptions, delivery history, and the applicable language setting. Release-receipt and release-watermark records are not linked to a user or destination and are not removed by `/forget`.
 
 The Service does not provide a data-export feature.
 

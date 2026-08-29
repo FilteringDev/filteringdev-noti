@@ -6,7 +6,7 @@ These Terms of Service ("Terms") govern your use of the filteringdev-noti bot (t
 
 ## 1. Service
 
-The Service sends notifications about new releases in supported repositories after internal verification. The Service is provided without charge unless the operator states otherwise.
+The Service periodically checks repositories where its GitHub App is installed and sends notifications about newly published non-draft releases after internal verification. Releases that existed when monitoring first begins are not sent. The Service is provided without charge unless the operator states otherwise.
 
 **Operator:**
 
