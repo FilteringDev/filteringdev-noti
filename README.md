@@ -1,12 +1,17 @@
 # filteringdev-noti
-이 문서는 [webhook-noti](https://github.com/FilteringDev/webhook-noti)를 기반으로 동작하는 filteringdev-noti bot 봇에 대한 설명입니다.
+This document describes the filteringdev-noti bot, which operates on the basis of [webhook-noti](https://github.com/FilteringDev/webhook-noti).
 
-## 대상 repo
-다음 repo에서의 새로운 릴리즈가 발견되면 내부 검증 후에 알림을 보냅니다.
+## Target repositories
+When a new release is found in the following repositories, the bot sends a notification after internal verification.
 
+## Installation
+Use one of the following methods to install the bot.
 
-## 설치 방법
-설치하시라면 아래 방법으로 진행하시면 됩니다.
-
-- Discord: https://discord.com/oauth2/authorize?client_id=1543001264776814723 를 오픈하시고 진행
+- Discord: Open and follow the instructions at https://discord.com/oauth2/authorize?client_id=1543001264776814723
 - Telegram: `@filteringdev_noti_bot`
+
+## Legal documents
+- [Terms of Service](TERMS_OF_SERVICE.md)
+- [Privacy Policy](PRIVACY_POLICY.md)
+
+For the Korean version, see [README-ko.md](README-ko.md).
